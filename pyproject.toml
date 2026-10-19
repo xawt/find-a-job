@@ -21,3 +21,17 @@ dev = [
     "ruff>=0.17.1",
     "ty>=0.0.89",
 ]
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "ANN", "D1"]
+ignore = ["D107"]  # __init__ is covered by the class docstring
+
+[tool.ruff.lint.flake8-annotations]
+mypy-init-return = true
+
+[tool.ty.terminal]
+error-on-warning = true
