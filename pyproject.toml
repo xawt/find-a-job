@@ -1,8 +1,10 @@
 [project]
 name = "find-a-job"
 version = "0.1.0"
-description = "Add your description here"
+description = "MCP server that collects LinkedIn job offers through Apify."
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
     { name = "Jarek", email = "9482128+xawt@users.noreply.github.com" }
 ]
