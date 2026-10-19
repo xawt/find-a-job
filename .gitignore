@@ -27,6 +27,16 @@ htmlcov/
 .env.*
 !.env.example
 
+# Local job data (JOB_DATA_DIR) and SQLite index
+data/
+*.sqlite
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+
+# Claude Code personal settings
+.claude/settings.local.json
+
 # Editors and OS
 .vscode/
 .idea/
