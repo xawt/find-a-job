@@ -2,7 +2,23 @@
 
 ## Project
 
-find-a-job — TODO: describe the project. See `README.md`.
+find-a-job — an MCP server that fetches LinkedIn job offers through the Apify API, stores the
+full data on the server and returns only short summaries to the model. See `README.md`; the
+working spec is in `.internal/linkedin-jobs-mcp-spec.md` (local only, gitignored).
+
+- Package sources: `src/find_a_job/` (src-layout)
+- Entry point: `find_a_job.cli:main` (`src/find_a_job/cli.py`); also runs as `uv run python -m find_a_job`
+- `cli.py` is a thin layer: it parses arguments, calls other modules and prints results.
+  Functionality lives in separate modules in `src/find_a_job/`, not in `cli.py`.
+- CLI commands are argparse subcommands (`find-a-job <command>`). Exit codes: 0 success,
+  1 runtime error, 2 usage or config error.
+- Errors: expected failures raise a subclass of `FindAJobError` (`src/find_a_job/errors.py`)
+  with a user-facing message and an `exit_code`. Modules raise them; `cli.main` alone catches
+  `FindAJobError` and prints `find-a-job: error: ...`. Wrap library errors (Apify client, HTTP,
+  OS, JSON, SQLite) in a `FindAJobError` subclass at the module boundary; don't catch them in
+  `cli.py`. Any other exception is a bug and should surface with its traceback.
+- Logs and diagnostics go to stderr, never stdout: over the stdio transport, stdout carries
+  MCP protocol messages only.
 
 ## Git conventions
 
@@ -58,6 +74,8 @@ Always use `uv`. Never call `pip`, `pip install`, bare `python`, or activate `.v
 
 | Task | Command |
 |---|---|
+| Run the CLI | `uv run find-a-job <command>` (`--help` lists them) |
+| Run as module | `uv run python -m find_a_job` |
 | Run any script/command in the env | `uv run <cmd>` |
 | Add dependency | `uv add <pkg>` |
 | Add dev dependency | `uv add --dev <pkg>` |
@@ -92,3 +110,6 @@ and ruff check after every Python edit and reports any remaining errors back to 
 ## Secrets
 
 Credentials and keys go in `.env`, which is gitignored. Never commit `.env` or hardcode secrets.
+`.env.example` lists every setting with placeholder values; keep it in sync when adding one.
+Nothing loads `.env` automatically — the code must load it explicitly. Never put the Apify token
+in URLs, logs, saved run files or MCP tool responses.
